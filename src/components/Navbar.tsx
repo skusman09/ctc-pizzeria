@@ -2,14 +2,16 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useCart } from '@/contexts/CartContext';
 import ThemeToggle from '@/components/ThemeToggle';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const { getTotalItems } = useCart();
 
   const navigation = [
     { name: 'Home', href: '/' },
@@ -24,6 +26,8 @@ const Navbar = () => {
     navigate('/menu');
     setIsOpen(false);
   };
+
+  const totalItems = getTotalItems();
 
   return (
     <motion.nav
@@ -53,7 +57,7 @@ const Navbar = () => {
                 className={`relative px-3 py-2 text-sm font-medium transition-colors duration-200 ${
                   isActive(item.href)
                     ? 'text-burger-600 dark:text-bun-400'
-                    : 'text-gray-700 dark:text-gray-300 hover:text-burger-600 dark:hover:text-bun-400'
+                    : 'text-gray-700 dark:text-gray-200 hover:text-burger-600 dark:hover:text-bun-400'
                 }`}
               >
                 {item.name}
@@ -65,6 +69,21 @@ const Navbar = () => {
                 )}
               </Link>
             ))}
+            
+            {/* Cart Icon */}
+            <div className="relative">
+              <ShoppingCart className="h-6 w-6 text-gray-700 dark:text-gray-200" />
+              {totalItems > 0 && (
+                <motion.span
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className="absolute -top-2 -right-2 bg-burger-600 dark:bg-bun-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold"
+                >
+                  {totalItems}
+                </motion.span>
+              )}
+            </div>
+            
             <ThemeToggle />
             <Button 
               onClick={handleOrderNow}
@@ -76,12 +95,26 @@ const Navbar = () => {
 
           {/* Mobile menu button */}
           <div className="md:hidden flex items-center space-x-2">
+            {/* Mobile Cart Icon */}
+            <div className="relative">
+              <ShoppingCart className="h-6 w-6 text-gray-700 dark:text-gray-200" />
+              {totalItems > 0 && (
+                <motion.span
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className="absolute -top-2 -right-2 bg-burger-600 dark:bg-bun-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold"
+                >
+                  {totalItems}
+                </motion.span>
+              )}
+            </div>
+            
             <ThemeToggle />
             <Button
               variant="ghost"
               size="sm"
               onClick={() => setIsOpen(!isOpen)}
-              className="text-gray-700 dark:text-gray-300"
+              className="text-gray-700 dark:text-gray-200"
             >
               {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </Button>
@@ -104,7 +137,7 @@ const Navbar = () => {
                 className={`block px-3 py-2 text-base font-medium rounded-md transition-colors duration-200 ${
                   isActive(item.href)
                     ? 'text-burger-600 dark:text-bun-400 bg-burger-50 dark:bg-gray-800'
-                    : 'text-gray-700 dark:text-gray-300 hover:text-burger-600 dark:hover:text-bun-400 hover:bg-gray-50 dark:hover:bg-gray-800'
+                    : 'text-gray-700 dark:text-gray-200 hover:text-burger-600 dark:hover:text-bun-400 hover:bg-gray-50 dark:hover:bg-gray-800'
                 }`}
               >
                 {item.name}

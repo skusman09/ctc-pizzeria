@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
+import { useCart } from '@/contexts/CartContext';
 
 interface BurgerCardProps {
   name: string;
@@ -14,8 +15,18 @@ interface BurgerCardProps {
 
 const BurgerCard = ({ name, description, price, image, featured = false }: BurgerCardProps) => {
   const { toast } = useToast();
+  const { addToCart } = useCart();
 
   const handleAddToCart = () => {
+    const priceNumber = parseFloat(price.replace('$', ''));
+    
+    addToCart({
+      id: name.toLowerCase().replace(/\s+/g, '-'),
+      name,
+      price: priceNumber,
+      image
+    });
+
     toast({
       title: "Added to Cart! 🍔",
       description: `${name} has been added to your cart.`,
@@ -60,7 +71,7 @@ const BurgerCard = ({ name, description, price, image, featured = false }: Burge
           <CardTitle className="text-xl font-bold text-gray-900 dark:text-white transition-colors duration-300 group-hover:text-burger-600 dark:group-hover:text-bun-400">
             {name}
           </CardTitle>
-          <CardDescription className="text-gray-600 dark:text-gray-400 line-clamp-2 transition-colors duration-300">
+          <CardDescription className="text-gray-600 dark:text-gray-300 line-clamp-2 transition-colors duration-300">
             {description}
           </CardDescription>
         </CardHeader>

@@ -104,7 +104,7 @@ const Menu = () => {
           <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white mb-4 transition-colors duration-300">
             Our Delicious Menu
           </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto transition-colors duration-300">
+          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto transition-colors duration-300">
             From classic favorites to gourmet creations, we have something for every burger lover.
           </p>
         </motion.div>
@@ -147,7 +147,7 @@ const Menu = () => {
           transition={{ delay: 0.3 }}
           className="text-center mb-8"
         >
-          <p className="text-gray-600 dark:text-gray-400 transition-colors duration-300">
+          <p className="text-gray-600 dark:text-gray-300 transition-colors duration-300">
             Showing {filteredBurgers.length} {filteredBurgers.length === 1 ? 'burger' : 'burgers'}
             {activeFilter !== 'all' && ` in ${filters.find(f => f.id === activeFilter)?.name}`}
           </p>
@@ -183,7 +183,7 @@ const Menu = () => {
             className="text-center py-12"
           >
             <div className="text-6xl mb-4">🍔</div>
-            <p className="text-xl text-gray-600 dark:text-gray-400 mb-4 transition-colors duration-300">
+            <p className="text-xl text-gray-600 dark:text-gray-300 mb-4 transition-colors duration-300">
               No burgers found in this category.
             </p>
             <Button 
