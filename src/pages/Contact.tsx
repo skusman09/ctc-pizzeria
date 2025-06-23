@@ -17,10 +17,39 @@ const Contact = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Basic form validation
+    if (!formData.name.trim()) {
+      toast({
+        title: "Name Required",
+        description: "Please enter your full name.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (!formData.email.trim() || !formData.email.includes('@')) {
+      toast({
+        title: "Valid Email Required",
+        description: "Please enter a valid email address.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (!formData.message.trim()) {
+      toast({
+        title: "Message Required",
+        description: "Please enter your message.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     // Simulate form submission
     toast({
-      title: "Message sent!",
-      description: "Thank you for contacting us. We'll get back to you soon!",
+      title: "Message sent! 📧",
+      description: "Thank you for contacting us. We'll get back to you within 24 hours!",
     });
     setFormData({ name: '', email: '', message: '' });
   };
@@ -38,7 +67,7 @@ const Contact = () => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
-      className="min-h-screen pt-20 pb-12"
+      className="min-h-screen pt-20 pb-12 bg-gradient-to-br from-bun-50 to-burger-50 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
@@ -48,10 +77,10 @@ const Contact = () => {
           transition={{ duration: 0.8 }}
           className="text-center mb-12"
         >
-          <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">
+          <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white mb-4 transition-colors duration-300">
             Get in Touch
           </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto transition-colors duration-300">
             We'd love to hear from you! Send us a message and we'll respond as soon as possible.
           </p>
         </motion.div>
@@ -63,18 +92,18 @@ const Contact = () => {
             animate={{ x: 0, opacity: 1 }}
             transition={{ delay: 0.2, duration: 0.8 }}
           >
-            <Card className="shadow-lg">
+            <Card className="shadow-lg bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
               <CardHeader>
-                <CardTitle className="text-2xl font-bold text-gray-900">Send us a Message</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">Send us a Message</CardTitle>
+                <CardDescription className="text-gray-600 dark:text-gray-300">
                   Fill out the form below and we'll get back to you within 24 hours.
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-                      Full Name
+                    <label htmlFor="name" className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+                      Full Name *
                     </label>
                     <Input
                       id="name"
@@ -83,14 +112,14 @@ const Contact = () => {
                       required
                       value={formData.name}
                       onChange={handleChange}
-                      className="w-full"
+                      className="w-full bg-gray-50 dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:border-orange-500 dark:focus:border-orange-400 focus:ring-orange-500 dark:focus:ring-orange-400"
                       placeholder="Your full name"
                     />
                   </div>
 
                   <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                      Email Address
+                    <label htmlFor="email" className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+                      Email Address *
                     </label>
                     <Input
                       id="email"
@@ -99,14 +128,14 @@ const Contact = () => {
                       required
                       value={formData.email}
                       onChange={handleChange}
-                      className="w-full"
+                      className="w-full bg-gray-50 dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:border-orange-500 dark:focus:border-orange-400 focus:ring-orange-500 dark:focus:ring-orange-400"
                       placeholder="your.email@example.com"
                     />
                   </div>
 
                   <div>
-                    <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
-                      Message
+                    <label htmlFor="message" className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+                      Message *
                     </label>
                     <Textarea
                       id="message"
@@ -114,17 +143,21 @@ const Contact = () => {
                       required
                       value={formData.message}
                       onChange={handleChange}
-                      className="w-full min-h-[120px]"
+                      className="w-full min-h-[120px] bg-gray-50 dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:border-orange-500 dark:focus:border-orange-400 focus:ring-orange-500 dark:focus:ring-orange-400"
                       placeholder="Tell us how we can help you..."
                     />
                   </div>
 
                   <Button 
                     type="submit" 
-                    className="w-full bg-burger-600 hover:bg-burger-700 text-white"
+                    className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 rounded-lg transition-colors duration-300 shadow-md hover:shadow-lg"
                   >
                     Send Message
                   </Button>
+                  
+                  <p className="text-xs text-gray-500 dark:text-gray-400 text-center mt-4">
+                    🔒 We respect your privacy—your info will never be shared.
+                  </p>
                 </form>
               </CardContent>
             </Card>
@@ -138,10 +171,10 @@ const Contact = () => {
             className="space-y-8"
           >
             {/* Contact Information */}
-            <Card className="shadow-lg">
+            <Card className="shadow-lg bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
               <CardHeader>
-                <CardTitle className="text-2xl font-bold text-gray-900">Visit Our Restaurant</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">Visit Our Restaurant</CardTitle>
+                <CardDescription className="text-gray-600 dark:text-gray-300">
                   Come and experience our amazing burgers in person!
                 </CardDescription>
               </CardHeader>
@@ -149,45 +182,52 @@ const Contact = () => {
                 <div className="flex items-start space-x-3">
                   <span className="text-2xl">📍</span>
                   <div>
-                    <h4 className="font-semibold text-gray-900">Address</h4>
-                    <p className="text-gray-600">123 Burger Street<br />Food City, FC 12345</p>
+                    <h4 className="font-semibold text-gray-900 dark:text-white">Address</h4>
+                    <p className="text-gray-600 dark:text-gray-300">123 Burger Street<br />Food City, FC 12345</p>
                   </div>
                 </div>
 
                 <div className="flex items-start space-x-3">
                   <span className="text-2xl">📞</span>
                   <div>
-                    <h4 className="font-semibold text-gray-900">Phone</h4>
-                    <p className="text-gray-600">(555) 123-BURGER</p>
+                    <h4 className="font-semibold text-gray-900 dark:text-white">Phone</h4>
+                    <p className="text-gray-600 dark:text-gray-300">(555) 123-BURGER</p>
                   </div>
                 </div>
 
                 <div className="flex items-start space-x-3">
                   <span className="text-2xl">✉️</span>
                   <div>
-                    <h4 className="font-semibold text-gray-900">Email</h4>
-                    <p className="text-gray-600">hello@theburgershop.com</p>
+                    <h4 className="font-semibold text-gray-900 dark:text-white">Email</h4>
+                    <p className="text-gray-600 dark:text-gray-300">hello@theburgershop.com</p>
                   </div>
                 </div>
 
                 <div className="flex items-start space-x-3">
                   <span className="text-2xl">🕒</span>
                   <div>
-                    <h4 className="font-semibold text-gray-900">Hours</h4>
-                    <p className="text-gray-600">Mon-Thu: 11AM-10PM<br />Fri-Sat: 11AM-11PM<br />Sun: 12PM-9PM</p>
+                    <h4 className="font-semibold text-gray-900 dark:text-white">Hours</h4>
+                    <p className="text-gray-600 dark:text-gray-300">Mon-Thu: 11AM-10PM<br />Fri-Sat: 11AM-11PM<br />Sun: 12PM-9PM</p>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
             {/* Map Placeholder */}
-            <Card className="shadow-lg">
+            <Card className="shadow-lg bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
               <CardContent className="p-0">
-                <div className="h-64 bg-gray-200 rounded-lg flex items-center justify-center">
-                  <div className="text-center text-gray-500">
+                <div className="h-64 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center">
+                  <div className="text-center text-gray-500 dark:text-gray-400">
                     <span className="text-4xl block mb-2">🗺️</span>
-                    <p>Interactive Map Coming Soon</p>
-                    <p className="text-sm">123 Burger Street, Food City, FC 12345</p>
+                    <p className="text-gray-900 dark:text-white font-medium">Interactive Map Coming Soon</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-300">123 Burger Street, Food City, FC 12345</p>
+                    <Button 
+                      variant="outline" 
+                      className="mt-3 border-orange-500 text-orange-600 hover:bg-orange-50 dark:text-orange-400 dark:hover:bg-orange-900/20"
+                      onClick={() => window.open('https://maps.google.com', '_blank')}
+                    >
+                      Find us on Google Maps
+                    </Button>
                   </div>
                 </div>
               </CardContent>

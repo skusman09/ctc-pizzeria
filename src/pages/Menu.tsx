@@ -7,14 +7,6 @@ import BurgerCard from '@/components/BurgerCard';
 const Menu = () => {
   const [activeFilter, setActiveFilter] = useState('all');
 
-  const filters = [
-    { id: 'all', name: 'All Burgers', count: 9 },
-    { id: 'beef', name: 'Beef', count: 3 },
-    { id: 'chicken', name: 'Chicken', count: 2 },
-    { id: 'veggie', name: 'Veggie', count: 2 },
-    { id: 'premium', name: 'Premium', count: 3 },
-  ];
-
   const burgers = [
     {
       name: "The Classic",
@@ -79,6 +71,27 @@ const Menu = () => {
       image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=500&h=300&fit=crop",
       category: "premium"
     }
+  ];
+
+  // Dynamic filter counts based on actual burger data
+  const getFilterCounts = () => {
+    return {
+      all: burgers.length,
+      beef: burgers.filter(burger => burger.category === 'beef').length,
+      chicken: burgers.filter(burger => burger.category === 'chicken').length,
+      veggie: burgers.filter(burger => burger.category === 'veggie').length,
+      premium: burgers.filter(burger => burger.category === 'premium').length,
+    };
+  };
+
+  const filterCounts = getFilterCounts();
+
+  const filters = [
+    { id: 'all', name: 'All Burgers', count: filterCounts.all },
+    { id: 'beef', name: 'Beef', count: filterCounts.beef },
+    { id: 'chicken', name: 'Chicken', count: filterCounts.chicken },
+    { id: 'veggie', name: 'Veggie', count: filterCounts.veggie },
+    { id: 'premium', name: 'Premium', count: filterCounts.premium },
   ];
 
   const filteredBurgers = activeFilter === 'all' 
