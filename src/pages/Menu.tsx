@@ -8,11 +8,11 @@ const Menu = () => {
   const [activeFilter, setActiveFilter] = useState('all');
 
   const filters = [
-    { id: 'all', name: 'All Burgers' },
-    { id: 'beef', name: 'Beef' },
-    { id: 'chicken', name: 'Chicken' },
-    { id: 'veggie', name: 'Veggie' },
-    { id: 'premium', name: 'Premium' },
+    { id: 'all', name: 'All Burgers', count: 9 },
+    { id: 'beef', name: 'Beef', count: 3 },
+    { id: 'chicken', name: 'Chicken', count: 2 },
+    { id: 'veggie', name: 'Veggie', count: 2 },
+    { id: 'premium', name: 'Premium', count: 3 },
   ];
 
   const burgers = [
@@ -91,7 +91,7 @@ const Menu = () => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
-      className="min-h-screen pt-20 pb-12"
+      className="min-h-screen pt-20 pb-12 bg-gradient-to-br from-bun-50 to-burger-50 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
@@ -101,10 +101,10 @@ const Menu = () => {
           transition={{ duration: 0.8 }}
           className="text-center mb-12"
         >
-          <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">
+          <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white mb-4 transition-colors duration-300">
             Our Delicious Menu
           </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto transition-colors duration-300">
             From classic favorites to gourmet creations, we have something for every burger lover.
           </p>
         </motion.div>
@@ -117,19 +117,40 @@ const Menu = () => {
           className="flex flex-wrap justify-center gap-4 mb-12"
         >
           {filters.map((filter) => (
-            <Button
+            <motion.div
               key={filter.id}
-              onClick={() => setActiveFilter(filter.id)}
-              variant={activeFilter === filter.id ? "default" : "outline"}
-              className={`${
-                activeFilter === filter.id
-                  ? "bg-burger-600 hover:bg-burger-700 text-white"
-                  : "border-burger-600 text-burger-600 hover:bg-burger-50"
-              }`}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
-              {filter.name}
-            </Button>
+              <Button
+                onClick={() => setActiveFilter(filter.id)}
+                variant={activeFilter === filter.id ? "default" : "outline"}
+                className={`relative ${
+                  activeFilter === filter.id
+                    ? "bg-burger-600 hover:bg-burger-700 dark:bg-bun-600 dark:hover:bg-bun-700 text-white shadow-md"
+                    : "border-2 border-burger-600 dark:border-bun-400 text-burger-600 dark:text-bun-400 hover:bg-burger-50 dark:hover:bg-gray-800"
+                } transition-all duration-300`}
+              >
+                {filter.name}
+                <span className="ml-2 text-xs bg-white/20 rounded-full px-2 py-1">
+                  {filter.count}
+                </span>
+              </Button>
+            </motion.div>
           ))}
+        </motion.div>
+
+        {/* Results Count */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3 }}
+          className="text-center mb-8"
+        >
+          <p className="text-gray-600 dark:text-gray-400 transition-colors duration-300">
+            Showing {filteredBurgers.length} {filteredBurgers.length === 1 ? 'burger' : 'burgers'}
+            {activeFilter !== 'all' && ` in ${filters.find(f => f.id === activeFilter)?.name}`}
+          </p>
         </motion.div>
 
         {/* Burger Grid */}
@@ -144,7 +165,11 @@ const Menu = () => {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ delay: index * 0.1, duration: 0.5 }}
+              transition={{ 
+                delay: index * 0.1, 
+                duration: 0.5,
+                layout: { duration: 0.3 }
+              }}
             >
               <BurgerCard {...burger} />
             </motion.div>
@@ -157,7 +182,16 @@ const Menu = () => {
             animate={{ opacity: 1 }}
             className="text-center py-12"
           >
-            <p className="text-xl text-gray-600">No burgers found in this category.</p>
+            <div className="text-6xl mb-4">🍔</div>
+            <p className="text-xl text-gray-600 dark:text-gray-400 mb-4 transition-colors duration-300">
+              No burgers found in this category.
+            </p>
+            <Button 
+              onClick={() => setActiveFilter('all')}
+              className="bg-burger-600 hover:bg-burger-700 dark:bg-bun-600 dark:hover:bg-bun-700 text-white"
+            >
+              Show All Burgers
+            </Button>
           </motion.div>
         )}
       </div>
