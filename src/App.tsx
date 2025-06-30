@@ -13,6 +13,7 @@ import Home from "./pages/Home";
 import Menu from "./pages/Menu";
 import Contact from "./pages/Contact";
 import StoreHours from "./pages/StoreHours";
+import Checkout from "./pages/Checkout";
 import NotFound from "./pages/NotFound";
 import BackToTop from "./components/BackToTop";
 
@@ -34,6 +35,7 @@ const App = () => (
                   <Route path="/menu" element={<Menu />} />
                   <Route path="/contact" element={<Contact />} />
                   <Route path="/hours" element={<StoreHours />} />
+                  <Route path="/checkout" element={<Checkout />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </AnimatePresence>

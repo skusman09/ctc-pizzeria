@@ -32,8 +32,7 @@ const Navbar = () => {
   const totalItems = getTotalItems();
 
   const handleCheckout = () => {
-    // TODO: Implement checkout logic
-    alert('Checkout functionality coming soon!');
+    navigate('/checkout');
     setIsCartOpen(false);
   };
 
