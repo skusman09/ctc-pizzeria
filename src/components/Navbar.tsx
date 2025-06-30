@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -14,7 +13,7 @@ const Navbar = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const { getTotalItems, clearCart } = useCart();
+  const { getTotalItems } = useCart();
 
   const navigation = [
     { name: 'Home', href: '/' },
@@ -94,29 +93,17 @@ const Navbar = () => {
                   )}
                 </Button>
               </SheetTrigger>
-              <SheetContent className="w-full sm:max-w-lg bg-white dark:bg-gray-900 p-4">
-                <SheetHeader className="pb-4">
-                  <SheetTitle className="text-gray-900 dark:text-white text-lg">Shopping Cart</SheetTitle>
-                </SheetHeader>
-                <div className="flex flex-col h-full">
-                  <div className="flex-1 overflow-y-auto pr-2">
-                    <CartSummary showActions={true} />
-                  </div>
+              <SheetContent className="w-full sm:max-w-lg p-0">
+                <div className="h-full flex flex-col">
+                  <CartSummary showActions={true} />
                   {totalItems > 0 && (
-                    <div className="border-t border-gray-200 dark:border-gray-700 pt-4 space-y-3 mt-4">
+                    <div className="border-t border-gray-200 dark:border-gray-700 p-4 bg-white dark:bg-gray-800">
                       <Button
                         onClick={handleCheckout}
                         className="w-full bg-orange-600 hover:bg-orange-700 dark:bg-orange-600 dark:hover:bg-orange-700 text-white py-3"
                         size="lg"
                       >
                         Proceed to Checkout
-                      </Button>
-                      <Button
-                        onClick={clearCart}
-                        variant="outline"
-                        className="w-full border-red-300 dark:border-red-600 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
-                      >
-                        Clear Cart
                       </Button>
                     </div>
                   )}
@@ -151,29 +138,17 @@ const Navbar = () => {
                   )}
                 </Button>
               </SheetTrigger>
-              <SheetContent className="w-full bg-white dark:bg-gray-900 p-4">
-                <SheetHeader className="pb-4">
-                  <SheetTitle className="text-gray-900 dark:text-white">Shopping Cart</SheetTitle>
-                </SheetHeader>
-                <div className="flex flex-col h-full">
-                  <div className="flex-1 overflow-y-auto pr-2">
-                    <CartSummary showActions={true} />
-                  </div>
+              <SheetContent className="w-full p-0">
+                <div className="h-full flex flex-col">
+                  <CartSummary showActions={true} />
                   {totalItems > 0 && (
-                    <div className="border-t border-gray-200 dark:border-gray-700 pt-4 space-y-3 mt-4">
+                    <div className="border-t border-gray-200 dark:border-gray-700 p-4 bg-white dark:bg-gray-800">
                       <Button
                         onClick={handleCheckout}
                         className="w-full bg-orange-600 hover:bg-orange-700 dark:bg-orange-600 dark:hover:bg-orange-700 text-white py-3"
                         size="lg"
                       >
                         Proceed to Checkout
-                      </Button>
-                      <Button
-                        onClick={clearCart}
-                        variant="outline"
-                        className="w-full border-red-300 dark:border-red-600 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
-                      >
-                        Clear Cart
                       </Button>
                     </div>
                   )}

@@ -50,18 +50,18 @@ const CartSummary = ({ showActions = true }: CartSummaryProps) => {
 
   if (items.length === 0) {
     return (
-      <Card className="bg-white dark:bg-gray-800 shadow-lg border-gray-200 dark:border-gray-700">
-        <CardHeader className="pb-3 sm:pb-4">
+      <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 h-full flex flex-col">
+        <CardHeader className="pb-3 sm:pb-4 flex-shrink-0">
           <CardTitle className="text-gray-900 dark:text-white text-base sm:text-lg flex items-center gap-2">
             <ShoppingCart className="h-4 w-4 sm:h-5 sm:w-5" />
             Your Cart
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-3 sm:p-6">
+        <CardContent className="p-3 sm:p-6 flex-1 flex items-center justify-center">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center py-6 sm:py-8"
+            className="text-center"
           >
             <div className="text-4xl sm:text-6xl mb-3 sm:mb-4">🛒</div>
             <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base mb-4">
@@ -77,7 +77,7 @@ const CartSummary = ({ showActions = true }: CartSummaryProps) => {
   }
 
   return (
-    <Card className="bg-white dark:bg-gray-800 shadow-lg border-gray-200 dark:border-gray-700 relative">
+    <div className="h-full flex flex-col bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 relative">
       {/* Clear Confirmation Modal */}
       <AnimatePresence>
         {showClearConfirmation && (
@@ -85,13 +85,13 @@ const CartSummary = ({ showActions = true }: CartSummaryProps) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 rounded-lg"
+            className="absolute inset-0 bg-black/20 backdrop-blur-sm z-50 flex items-center justify-center p-4"
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-xl max-w-sm w-full"
+              className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg border border-gray-200 dark:border-gray-700 max-w-sm w-full"
             >
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                 Clear Cart?
@@ -121,15 +121,16 @@ const CartSummary = ({ showActions = true }: CartSummaryProps) => {
         )}
       </AnimatePresence>
 
-      <CardHeader className="pb-2 sm:pb-3 px-3 sm:px-6 pt-3 sm:pt-6">
+      {/* Header - Fixed */}
+      <div className="flex-shrink-0 pb-2 sm:pb-3 px-3 sm:px-6 pt-3 sm:pt-6 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-gray-900 dark:text-white flex items-center gap-2 text-base sm:text-lg">
+          <div className="text-gray-900 dark:text-white flex items-center gap-2 text-base sm:text-lg font-semibold">
             <ShoppingCart className="h-4 w-4 sm:h-5 sm:w-5" />
             Your Cart
             <span className="text-xs sm:text-sm font-normal text-gray-600 dark:text-gray-300 ml-1">
               ({getTotalItems()} {getTotalItems() === 1 ? 'item' : 'items'})
             </span>
-          </CardTitle>
+          </div>
           <Button
             onClick={() => setShowClearConfirmation(true)}
             variant="outline"
@@ -141,10 +142,11 @@ const CartSummary = ({ showActions = true }: CartSummaryProps) => {
             <span className="hidden sm:inline">Clear</span>
           </Button>
         </div>
-      </CardHeader>
+      </div>
       
-      <CardContent className="space-y-2 sm:space-y-3 px-3 sm:px-6 pb-3 sm:pb-6">
-        <div className="max-h-60 sm:max-h-80 overflow-y-auto pr-1 sm:pr-2 space-y-2 sm:space-y-3 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600">
+      {/* Scrollable Items Area - Flexible */}
+      <div className="flex-1 overflow-y-auto px-3 sm:px-6 py-3 sm:py-4">
+        <div className="space-y-2 sm:space-y-3">
           <AnimatePresence>
             {items.map((item) => (
               <motion.div
@@ -230,24 +232,25 @@ const CartSummary = ({ showActions = true }: CartSummaryProps) => {
             ))}
           </AnimatePresence>
         </div>
+      </div>
         
-        <motion.div 
-          className="border-t border-gray-200 dark:border-gray-700 pt-3 sm:pt-4 mt-3 sm:mt-4 sticky bottom-0 bg-white dark:bg-gray-800"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
-          <div className="flex justify-between items-center text-base sm:text-lg font-bold">
-            <span className="text-gray-900 dark:text-white">Total:</span>
-            <span className="text-orange-600 dark:text-orange-400">
-              ₹{getTotalPrice().toFixed(0)}
-            </span>
-          </div>
-          <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-            Taxes and delivery charges will be calculated at checkout
-          </div>
-        </motion.div>
-      </CardContent>
-    </Card>
+      {/* Footer - Fixed */}
+      <motion.div 
+        className="flex-shrink-0 border-t border-gray-200 dark:border-gray-700 pt-3 sm:pt-4 px-3 sm:px-6 pb-3 sm:pb-6 bg-white dark:bg-gray-800"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+      >
+        <div className="flex justify-between items-center text-base sm:text-lg font-bold">
+          <span className="text-gray-900 dark:text-white">Total:</span>
+          <span className="text-orange-600 dark:text-orange-400">
+            ₹{getTotalPrice().toFixed(0)}
+          </span>
+        </div>
+        <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+          Taxes and delivery charges will be calculated at checkout
+        </div>
+      </motion.div>
+    </div>
   );
 };
 
