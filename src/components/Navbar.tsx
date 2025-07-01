@@ -1,205 +1,173 @@
-import { useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Menu, X, ShoppingCart } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { useCart } from '@/contexts/CartContext';
-import ThemeToggle from '@/components/ThemeToggle';
-import CartSummary from '@/components/CartSummary';
+
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import { Menu, X, ShoppingCart, User, LogOut, Shield } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useCart } from "@/contexts/CartContext";
+import ThemeToggle from "./ThemeToggle";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import CartSummary from "./CartSummary";
 
 const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const location = useLocation();
+  const { user, userRole, signOut } = useAuth();
+  const { items } = useCart();
   const navigate = useNavigate();
-  const { getTotalItems } = useCart();
 
-  const navigation = [
-    { name: 'Home', href: '/' },
-    { name: 'Menu', href: '/menu' },
-    { name: 'Contact', href: '/contact' },
-    { name: 'Hours', href: '/hours' },
+  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/');
+  };
+
+  const navLinks = [
+    { href: "/", label: "Home" },
+    { href: "/menu", label: "Menu" },
+    { href: "/hours", label: "Store Hours" },
+    { href: "/contact", label: "Contact" },
   ];
 
-  const isActive = (path: string) => location.pathname === path;
-
-  const handleOrderNow = () => {
-    navigate('/menu');
-    setIsOpen(false);
-  };
-
-  const totalItems = getTotalItems();
-
-  const handleCheckout = () => {
-    navigate('/checkout');
-    setIsCartOpen(false);
-  };
-
   return (
-    <motion.nav
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      className="sticky top-0 z-50 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md shadow-lg border-b border-orange-200 dark:border-gray-700 transition-colors duration-300"
-    >
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
-        <div className="flex justify-between items-center h-14 sm:h-16">
+    <nav className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
             <motion.div
               whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="text-lg sm:text-xl lg:text-2xl font-bold text-orange-600 dark:text-orange-400 transition-colors duration-300"
+              className="text-2xl font-bold text-orange-600 dark:text-orange-400"
             >
-              🍕 CTC Pizzeria
+              🍔 Juicy Burger
             </motion.div>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-4 lg:space-x-6">
-            {navigation.map((item) => (
+          <div className="hidden md:flex items-center space-x-8">
+            {navLinks.map((link) => (
               <Link
-                key={item.name}
-                to={item.href}
-                className={`relative px-2 lg:px-3 py-2 text-sm font-medium transition-colors duration-200 ${
-                  isActive(item.href)
-                    ? 'text-orange-600 dark:text-orange-400'
-                    : 'text-gray-700 dark:text-gray-200 hover:text-orange-600 dark:hover:text-orange-400'
-                }`}
+                key={link.href}
+                to={link.href}
+                className="text-gray-700 hover:text-orange-600 dark:text-gray-300 dark:hover:text-orange-400 transition-colors font-medium"
               >
-                {item.name}
-                {isActive(item.href) && (
-                  <motion.div
-                    layoutId="activeTab"
-                    className="absolute inset-x-0 -bottom-1 h-0.5 bg-orange-600 dark:bg-orange-400"
-                  />
-                )}
+                {link.label}
               </Link>
             ))}
-            
-            {/* Cart Icon with Sheet */}
-            <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
-              <SheetTrigger asChild>
-                <Button variant="ghost" className="relative p-2 hover:bg-orange-50 dark:hover:bg-gray-800">
-                  <ShoppingCart className="h-5 w-5 lg:h-6 lg:w-6 text-gray-700 dark:text-gray-200" />
-                  {totalItems > 0 && (
-                    <motion.span
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      className="absolute -top-1 -right-1 bg-orange-600 dark:bg-orange-500 text-white text-xs rounded-full h-4 w-4 lg:h-5 lg:w-5 flex items-center justify-center font-bold text-[10px] lg:text-xs"
-                    >
-                      {totalItems > 99 ? '99+' : totalItems}
-                    </motion.span>
-                  )}
-                </Button>
-              </SheetTrigger>
-              <SheetContent className="w-full sm:max-w-lg p-0">
-                <div className="h-full flex flex-col">
-                  <CartSummary showActions={true} />
-                  {totalItems > 0 && (
-                    <div className="border-t border-gray-200 dark:border-gray-700 p-4 bg-white dark:bg-gray-800">
-                      <Button
-                        onClick={handleCheckout}
-                        className="w-full bg-orange-600 hover:bg-orange-700 dark:bg-orange-600 dark:hover:bg-orange-700 text-white py-3"
-                        size="lg"
-                      >
-                        Proceed to Checkout
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              </SheetContent>
-            </Sheet>
-            
-            <ThemeToggle />
-            <Button 
-              onClick={handleOrderNow}
-              className="bg-orange-600 hover:bg-orange-700 dark:bg-orange-600 dark:hover:bg-orange-700 text-white text-sm px-4 py-2 transition-colors duration-200"
-            >
-              Order Now
-            </Button>
           </div>
 
-          {/* Mobile menu button */}
-          <div className="md:hidden flex items-center space-x-2">
-            {/* Mobile Cart Icon */}
-            <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
-              <SheetTrigger asChild>
-                <Button variant="ghost" className="relative p-2 hover:bg-orange-50 dark:hover:bg-gray-800">
-                  <ShoppingCart className="h-5 w-5 text-gray-700 dark:text-gray-200" />
-                  {totalItems > 0 && (
-                    <motion.span
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      className="absolute -top-1 -right-1 bg-orange-600 dark:bg-orange-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center font-bold text-[10px]"
-                    >
-                      {totalItems > 99 ? '99+' : totalItems}
-                    </motion.span>
-                  )}
-                </Button>
-              </SheetTrigger>
-              <SheetContent className="w-full p-0">
-                <div className="h-full flex flex-col">
-                  <CartSummary showActions={true} />
-                  {totalItems > 0 && (
-                    <div className="border-t border-gray-200 dark:border-gray-700 p-4 bg-white dark:bg-gray-800">
-                      <Button
-                        onClick={handleCheckout}
-                        className="w-full bg-orange-600 hover:bg-orange-700 dark:bg-orange-600 dark:hover:bg-orange-700 text-white py-3"
-                        size="lg"
-                      >
-                        Proceed to Checkout
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              </SheetContent>
-            </Sheet>
-            
+          {/* Right Side Actions */}
+          <div className="flex items-center space-x-4">
             <ThemeToggle />
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setIsOpen(!isOpen)}
-              className="text-gray-700 dark:text-gray-200 p-2"
-            >
-              {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-            </Button>
+            
+            {/* Cart Button */}
+            {user && (
+              <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
+                <SheetTrigger asChild>
+                  <Button variant="outline" size="sm" className="relative">
+                    <ShoppingCart className="h-4 w-4 mr-2" />
+                    Cart
+                    {totalItems > 0 && (
+                      <Badge 
+                        variant="destructive" 
+                        className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs"
+                      >
+                        {totalItems}
+                      </Badge>
+                    )}
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="right" className="w-full sm:max-w-lg">
+                  <SheetHeader>
+                    <SheetTitle>Your Cart</SheetTitle>
+                  </SheetHeader>
+                  <CartSummary />
+                </SheetContent>
+              </Sheet>
+            )}
+
+            {/* User Menu */}
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm">
+                    <User className="h-4 w-4 mr-2" />
+                    Account
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem disabled>
+                    {user.email}
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  {userRole === 'admin' && (
+                    <>
+                      <DropdownMenuItem onClick={() => navigate('/admin')}>
+                        <Shield className="mr-2 h-4 w-4" />
+                        Admin Dashboard
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                    </>
+                  )}
+                  <DropdownMenuItem onClick={handleSignOut}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Sign Out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button onClick={() => navigate('/auth')} size="sm">
+                Sign In
+              </Button>
+            )}
+
+            {/* Mobile Menu Toggle */}
+            <div className="md:hidden">
+              <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
+                <SheetTrigger asChild>
+                  <Button variant="outline" size="sm">
+                    {isMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="left">
+                  <SheetHeader>
+                    <SheetTitle>Navigation</SheetTitle>
+                  </SheetHeader>
+                  <div className="flex flex-col space-y-4 mt-4">
+                    {navLinks.map((link) => (
+                      <Link
+                        key={link.href}
+                        to={link.href}
+                        onClick={() => setIsMenuOpen(false)}
+                        className="text-gray-700 hover:text-orange-600 dark:text-gray-300 dark:hover:text-orange-400 transition-colors font-medium py-2"
+                      >
+                        {link.label}
+                      </Link>
+                    ))}
+                  </div>
+                </SheetContent>
+              </Sheet>
+            </div>
           </div>
         </div>
-
-        {/* Mobile Navigation */}
-        <motion.div
-          initial={false}
-          animate={isOpen ? { height: 'auto', opacity: 1 } : { height: 0, opacity: 0 }}
-          transition={{ duration: 0.3 }}
-          className="md:hidden overflow-hidden"
-        >
-          <div className="py-3 space-y-1">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                to={item.href}
-                onClick={() => setIsOpen(false)}
-                className={`block px-3 py-3 text-base font-medium rounded-md transition-colors duration-200 ${
-                  isActive(item.href)
-                    ? 'text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-gray-800'
-                    : 'text-gray-700 dark:text-gray-200 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-gray-50 dark:hover:bg-gray-800'
-                }`}
-              >
-                {item.name}
-              </Link>
-            ))}
-            <Button 
-              onClick={handleOrderNow}
-              className="w-full mt-3 bg-orange-600 hover:bg-orange-700 dark:bg-orange-600 dark:hover:bg-orange-700 text-white py-3"
-            >
-              Order Now
-            </Button>
-          </div>
-        </motion.div>
       </div>
-    </motion.nav>
+    </nav>
   );
 };
 

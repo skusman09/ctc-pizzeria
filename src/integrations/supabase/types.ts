@@ -9,6 +9,39 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      audit_logs: {
+        Row: {
+          action: string
+          admin_id: string | null
+          created_at: string | null
+          id: string
+          new_values: Json | null
+          old_values: Json | null
+          record_id: string | null
+          table_name: string
+        }
+        Insert: {
+          action: string
+          admin_id?: string | null
+          created_at?: string | null
+          id?: string
+          new_values?: Json | null
+          old_values?: Json | null
+          record_id?: string | null
+          table_name: string
+        }
+        Update: {
+          action?: string
+          admin_id?: string | null
+          created_at?: string | null
+          id?: string
+          new_values?: Json | null
+          old_values?: Json | null
+          record_id?: string | null
+          table_name?: string
+        }
+        Relationships: []
+      }
       cart_items: {
         Row: {
           created_at: string | null
@@ -85,10 +118,12 @@ export type Database = {
           description: string | null
           id: string
           is_active: boolean | null
+          is_percentage: boolean | null
           max_uses: number | null
           min_order_amount: number | null
           name: string
           type: Database["public"]["Enums"]["discount_type"]
+          usage_count: number | null
           valid_from: string | null
           valid_until: string | null
           value: number
@@ -100,10 +135,12 @@ export type Database = {
           description?: string | null
           id?: string
           is_active?: boolean | null
+          is_percentage?: boolean | null
           max_uses?: number | null
           min_order_amount?: number | null
           name: string
           type: Database["public"]["Enums"]["discount_type"]
+          usage_count?: number | null
           valid_from?: string | null
           valid_until?: string | null
           value: number
@@ -115,10 +152,12 @@ export type Database = {
           description?: string | null
           id?: string
           is_active?: boolean | null
+          is_percentage?: boolean | null
           max_uses?: number | null
           min_order_amount?: number | null
           name?: string
           type?: Database["public"]["Enums"]["discount_type"]
+          usage_count?: number | null
           valid_from?: string | null
           valid_until?: string | null
           value?: number
@@ -134,9 +173,11 @@ export type Database = {
           image_url: string | null
           is_available: boolean | null
           is_seasonal: boolean | null
+          low_stock_threshold: number | null
           name: string
           popularity_score: number | null
           price: number
+          stock_quantity: number | null
           updated_at: string | null
         }
         Insert: {
@@ -147,9 +188,11 @@ export type Database = {
           image_url?: string | null
           is_available?: boolean | null
           is_seasonal?: boolean | null
+          low_stock_threshold?: number | null
           name: string
           popularity_score?: number | null
           price: number
+          stock_quantity?: number | null
           updated_at?: string | null
         }
         Update: {
@@ -160,9 +203,11 @@ export type Database = {
           image_url?: string | null
           is_available?: boolean | null
           is_seasonal?: boolean | null
+          low_stock_threshold?: number | null
           name?: string
           popularity_score?: number | null
           price?: number
+          stock_quantity?: number | null
           updated_at?: string | null
         }
         Relationships: [
@@ -223,10 +268,13 @@ export type Database = {
       orders: {
         Row: {
           created_at: string | null
+          customer_email: string | null
+          customer_name: string | null
           delivery_address: string | null
           discount_amount: number | null
           id: string
           notes: string | null
+          order_status: Database["public"]["Enums"]["order_status_enum"] | null
           payment_intent_id: string | null
           phone: string | null
           status: Database["public"]["Enums"]["order_status"] | null
@@ -236,10 +284,13 @@ export type Database = {
         }
         Insert: {
           created_at?: string | null
+          customer_email?: string | null
+          customer_name?: string | null
           delivery_address?: string | null
           discount_amount?: number | null
           id?: string
           notes?: string | null
+          order_status?: Database["public"]["Enums"]["order_status_enum"] | null
           payment_intent_id?: string | null
           phone?: string | null
           status?: Database["public"]["Enums"]["order_status"] | null
@@ -249,10 +300,13 @@ export type Database = {
         }
         Update: {
           created_at?: string | null
+          customer_email?: string | null
+          customer_name?: string | null
           delivery_address?: string | null
           discount_amount?: number | null
           id?: string
           notes?: string | null
+          order_status?: Database["public"]["Enums"]["order_status_enum"] | null
           payment_intent_id?: string | null
           phone?: string | null
           status?: Database["public"]["Enums"]["order_status"] | null
@@ -397,6 +451,13 @@ export type Database = {
         | "ready"
         | "delivered"
         | "cancelled"
+      order_status_enum:
+        | "pending"
+        | "confirmed"
+        | "preparing"
+        | "ready"
+        | "completed"
+        | "cancelled"
       user_role: "admin" | "customer"
     }
     CompositeTypes: {
@@ -520,6 +581,14 @@ export const Constants = {
         "preparing",
         "ready",
         "delivered",
+        "cancelled",
+      ],
+      order_status_enum: [
+        "pending",
+        "confirmed",
+        "preparing",
+        "ready",
+        "completed",
         "cancelled",
       ],
       user_role: ["admin", "customer"],
