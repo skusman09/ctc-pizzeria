@@ -50,4 +50,4 @@ Vercel (Recommended for React/Vite)
 
 Netlify
 
-Cloudflare Pages
+Cloudflare Pages 
