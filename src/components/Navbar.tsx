@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Menu, X, ShoppingCart, User, LogOut, Shield } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -30,6 +30,10 @@ const Navbar = () => {
   const { user, userRole, signOut } = useAuth();
   const { items, clearCart } = useCart();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const isActive = (href: string) =>
+    href === '/' ? location.pathname === '/' : location.pathname.startsWith(href);
 
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -66,7 +70,11 @@ const Navbar = () => {
               <Link
                 key={link.href}
                 to={link.href}
-                className="text-gray-700 hover:text-orange-600 dark:text-gray-300 dark:hover:text-orange-400 transition-colors font-medium"
+                className={`transition-colors font-medium ${
+                  isActive(link.href)
+                    ? 'text-orange-600 dark:text-orange-400'
+                    : 'text-gray-700 hover:text-orange-600 dark:text-gray-300 dark:hover:text-orange-400'
+                }`}
               >
                 {link.label}
               </Link>
@@ -158,7 +166,11 @@ const Navbar = () => {
                         key={link.href}
                         to={link.href}
                         onClick={() => setIsMenuOpen(false)}
-                        className="text-gray-700 hover:text-orange-600 dark:text-gray-300 dark:hover:text-orange-400 transition-colors font-medium py-2"
+                        className={`transition-colors font-medium py-2 ${
+                          isActive(link.href)
+                            ? 'text-orange-600 dark:text-orange-400'
+                            : 'text-gray-700 hover:text-orange-600 dark:text-gray-300 dark:hover:text-orange-400'
+                        }`}
                       >
                         {link.label}
                       </Link>
