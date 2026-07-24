@@ -1,18 +1,30 @@
-
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Clock, Instagram, Facebook } from 'lucide-react';
+import { 
+  Clock, 
+  Instagram, 
+  Facebook, 
+  MapPin, 
+  Phone, 
+  Sparkles, 
+  Calendar,
+  Navigation,
+  UtensilsCrossed,
+  Tag
+} from 'lucide-react';
 
 const StoreHours = () => {
+  const navigate = useNavigate();
   const hours = [
     { day: 'Monday', time: '9:00 AM - 11:00 PM', icon: '📅' },
     { day: 'Tuesday', time: '9:00 AM - 11:00 PM', icon: '📅' },
-    { day: 'Wednesday', time: '9:00 AM - 11:00 PM', icon: '🥟', special: 'Momo Wednesday - BOGO Free!' },
+    { day: 'Wednesday', time: '9:00 AM - 11:00 PM', icon: '🥟', special: 'Momo Wednesday - Buy 1 Get 1 Free!' },
     { day: 'Thursday', time: '9:00 AM - 11:00 PM', icon: '📅' },
-    { day: 'Friday', time: '9:00 AM - 11:00 PM', icon: '🎉' },
-    { day: 'Saturday', time: '9:00 AM - 11:00 PM', icon: '🎉' },
-    { day: 'Sunday', time: '9:00 AM - 11:00 PM', icon: '📅' },
+    { day: 'Friday', time: '9:00 AM - 11:00 PM', icon: '🎉', special: 'Weekend Special Pizza Combos' },
+    { day: 'Saturday', time: '9:00 AM - 11:00 PM', icon: '🎉', special: 'Weekend Rush: Order Early!' },
+    { day: 'Sunday', time: '9:00 AM - 11:00 PM', icon: '🍕', special: 'Family Feast Discount' },
   ];
 
   const getCurrentDay = () => {
@@ -23,10 +35,10 @@ const StoreHours = () => {
   const currentDay = getCurrentDay();
 
   const offers = [
-    { title: "App-only perks", description: "Up to 50% off on first order + live tracking", icon: "📱" },
-    { title: "Pre-book offer", description: "Flat 15% off (9 AM–11:55 PM)", icon: "⏰" },
-    { title: "Instant offer", description: "Flat 10% off on bill payments", icon: "💳" },
-    { title: "Loyalty rewards", description: "Flat 10% off on next dining payment", icon: "🎁" }
+    { title: "App Perks", description: "Up to 50% off on first order + live tracking", icon: "📱", code: "FIRST50" },
+    { title: "Momo Wednesday", description: "Buy 1 Get 1 Free on all momos", icon: "🥟", code: "MOMOFREE" },
+    { title: "Instant Discount", description: "Flat 10% off on UPI & card payments", icon: "💳", code: "UPI10" },
+    { title: "Loyalty Program", description: "Earn 10% cashback points on dining bills", icon: "🎁", code: "REWARD10" }
   ];
 
   return (
@@ -34,214 +46,291 @@ const StoreHours = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.5 }}
-      className="min-h-screen pt-16 sm:pt-20 pb-8 sm:pb-12 bg-gradient-to-br from-orange-50 to-red-50 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300"
+      transition={{ duration: 0.4 }}
+      className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300 py-8 sm:py-12"
     >
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-10">
+
         {/* Header */}
         <motion.div
-          initial={{ y: 30, opacity: 0 }}
+          initial={{ y: -15, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-8 sm:mb-12"
+          transition={{ duration: 0.5 }}
+          className="text-center max-w-3xl mx-auto space-y-3"
         >
-          <div className="flex justify-center mb-4">
-            <Clock className="h-10 w-10 sm:h-12 sm:w-12 text-orange-600" />
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-200/80 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 text-xs sm:text-sm font-medium">
+            <Clock className="w-3.5 h-3.5 text-slate-700 dark:text-slate-300" />
+            <span>Open 7 Days a Week • 9 AM to 11 PM</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4">
-            Store Hours
+
+          <h1 className="text-3xl sm:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+            Store Hours & Offers
           </h1>
-          <p className="text-base sm:text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto px-4">
-            We're here to serve you delicious food every day of the week!
+
+          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400">
+            Check our daily schedule, special combo days, and active dining offers at CTC Pizzeria Nallasopara East.
           </p>
         </motion.div>
 
-        {/* Current Status */}
+        {/* Clean Live Status Banner */}
         <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.2, duration: 0.8 }}
-          className="mb-6 sm:mb-8"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.1, duration: 0.4 }}
         >
-          <Card className="bg-gradient-to-r from-orange-50 to-red-50 dark:from-gray-800 dark:to-gray-700 border-orange-200 dark:border-gray-600">
-            <CardContent className="text-center py-4 sm:py-6">
-              <h2 className="text-xl sm:text-2xl font-bold text-orange-700 dark:text-orange-400 mb-2">We're Open Today!</h2>
-              <p className="text-orange-600 dark:text-orange-300 text-sm sm:text-base">
-                Come grab delicious pizza, momos, and more - we're ready to serve you! 🍕
-              </p>
-              <p className="text-gray-600 dark:text-gray-300 text-sm mt-2">
-                ₹350 for two (approx.) • Digital payments accepted
-              </p>
-            </CardContent>
+          <Card className="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs p-6 sm:p-8">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
+              <div className="flex items-center gap-4 text-center sm:text-left">
+                <div className="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 flex items-center justify-center shrink-0">
+                  <UtensilsCrossed className="w-6 h-6" />
+                </div>
+                <div>
+                  <div className="flex items-center justify-center sm:justify-start gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+                    <span className="text-xs font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+                      We're Open Today!
+                    </span>
+                  </div>
+                  <h2 className="text-xl font-bold text-slate-900 dark:text-white mt-0.5">
+                    Ready to serve hot pizzas & momos
+                  </h2>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                    Today ({currentDay}): 9:00 AM – 11:00 PM • Approx. ₹350 for two people
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 shrink-0">
+                <Button
+                  onClick={() => navigate('/menu')}
+                  className="bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 font-bold px-5 py-2.5 rounded-xl shadow-xs text-xs transition-all cursor-pointer"
+                >
+                  Order Now
+                </Button>
+                <a
+                  href="tel:+918655676716"
+                  className="p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all"
+                  title="Call Store"
+                >
+                  <Phone className="w-4 h-4" />
+                </a>
+              </div>
+            </div>
           </Card>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-8 sm:mb-12">
-          {/* Hours List */}
+        {/* Balanced 2-Column Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+
+          {/* Left Side: Consolidated Weekly Schedule Card (7 cols) */}
           <motion.div
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.4, duration: 0.8 }}
-            className="space-y-3 sm:space-y-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+            className="lg:col-span-7 flex flex-col"
           >
-            <h3 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6">Daily Hours</h3>
-            {hours.map((schedule, index) => (
-              <motion.div
-                key={schedule.day}
-                initial={{ x: -20, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ delay: index * 0.1, duration: 0.5 }}
-              >
-                <Card className={`transition-all duration-300 hover:shadow-lg ${
-                  schedule.day === currentDay 
-                    ? 'bg-orange-50 dark:bg-gray-800 border-orange-300 dark:border-orange-600 shadow-md' 
-                    : 'hover:bg-gray-50 dark:hover:bg-gray-800/50 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700'
-                }`}>
-                  <CardContent className="flex items-center justify-between p-3 sm:p-4">
-                    <div className="flex items-center space-x-3 sm:space-x-4">
-                      <span className="text-xl sm:text-2xl">{schedule.icon}</span>
-                      <div>
-                        <h3 className={`text-base sm:text-lg font-semibold ${
-                          schedule.day === currentDay ? 'text-orange-700 dark:text-orange-400' : 'text-gray-900 dark:text-white'
-                        }`}>
-                          {schedule.day}
-                          {schedule.day === currentDay && (
-                            <span className="ml-2 text-xs bg-orange-600 text-white px-2 py-1 rounded-full">
-                              Today
+            <Card className="rounded-2xl shadow-xs bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 overflow-hidden flex-1">
+              <CardHeader className="bg-slate-50/60 dark:bg-slate-950/60 p-6 border-b border-slate-100 dark:border-slate-800">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-xl bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 flex items-center justify-center">
+                      <Calendar className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <CardTitle className="text-lg font-bold text-slate-900 dark:text-white">
+                        Weekly Operating Schedule
+                      </CardTitle>
+                      <CardDescription className="text-xs text-slate-500 dark:text-slate-400">
+                        Kitchen & counter timings for dining, takeaway and delivery
+                      </CardDescription>
+                    </div>
+                  </div>
+                  <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-900">
+                    Active All Days
+                  </span>
+                </div>
+              </CardHeader>
+
+              <CardContent className="p-4 sm:p-6 space-y-2">
+                {hours.map((schedule) => {
+                  const isToday = schedule.day === currentDay;
+                  return (
+                    <div
+                      key={schedule.day}
+                      className={`p-3.5 rounded-xl transition-all duration-200 flex items-center justify-between border ${
+                        isToday
+                          ? 'bg-slate-100/80 dark:bg-slate-800/80 border-slate-400 dark:border-slate-600 shadow-2xs'
+                          : 'bg-slate-50/50 dark:bg-slate-950/40 border-slate-200/60 dark:border-slate-800'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="text-lg">{schedule.icon}</span>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className={`font-semibold text-xs sm:text-sm ${isToday ? 'text-slate-900 dark:text-white font-bold' : 'text-slate-700 dark:text-slate-300'}`}>
+                              {schedule.day}
                             </span>
+                            {isToday && (
+                              <span className="px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wider bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900 rounded-md">
+                                Today
+                              </span>
+                            )}
+                          </div>
+                          {schedule.special && (
+                            <p className="text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1 mt-0.5">
+                              <Sparkles className="w-3 h-3" />
+                              <span>{schedule.special}</span>
+                            </p>
                           )}
-                        </h3>
-                        {schedule.special && (
-                          <p className="text-xs sm:text-sm text-orange-600 dark:text-orange-400 font-medium">
-                            {schedule.special}
-                          </p>
-                        )}
+                        </div>
+                      </div>
+
+                      <div className="text-right">
+                        <span className={`text-xs sm:text-sm font-medium ${isToday ? 'text-slate-900 dark:text-white font-bold' : 'text-slate-600 dark:text-slate-400'}`}>
+                          {schedule.time}
+                        </span>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <p className={`text-sm sm:text-base font-medium ${
-                        schedule.day === currentDay ? 'text-orange-600 dark:text-orange-400' : 'text-gray-700 dark:text-gray-300'
-                      }`}>
-                        {schedule.time}
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
+                  );
+                })}
+              </CardContent>
+            </Card>
           </motion.div>
 
-          {/* Offers & Social */}
+          {/* Right Side: Offers & Info Stack (5 cols) */}
           <motion.div
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.6, duration: 0.8 }}
-            className="space-y-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3, duration: 0.5 }}
+            className="lg:col-span-5 flex flex-col gap-6"
           >
-            {/* Special Offers */}
-            <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
-              <CardHeader className="pb-4">
-                <CardTitle className="flex items-center space-x-2 text-lg sm:text-xl">
-                  <span>🎉</span>
-                  <span className="text-gray-900 dark:text-white">Special Offers</span>
-                </CardTitle>
-                <CardDescription className="text-gray-600 dark:text-gray-300 text-sm sm:text-base">
-                  Save more on your favorite food!
-                </CardDescription>
+            {/* Active Offers */}
+            <Card className="rounded-2xl shadow-xs bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex-1 flex flex-col">
+              <CardHeader className="p-5 pb-3">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 flex items-center justify-center">
+                    <Tag className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-base font-bold text-slate-900 dark:text-white">
+                      Active Deals & Offers
+                    </CardTitle>
+                    <CardDescription className="text-xs text-slate-500 dark:text-slate-400">
+                      Valid for dine-in & online orders
+                    </CardDescription>
+                  </div>
+                </div>
               </CardHeader>
-              <CardContent className="space-y-3 p-4 sm:p-6">
-                {offers.map((offer, index) => (
-                  <div key={index} className="flex items-start space-x-3 p-2 sm:p-3 bg-orange-50 dark:bg-gray-700 rounded-lg">
-                    <span className="text-lg sm:text-xl">{offer.icon}</span>
-                    <div>
-                      <h4 className="font-semibold text-gray-900 dark:text-white text-sm sm:text-base">{offer.title}</h4>
-                      <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">{offer.description}</p>
+
+              <CardContent className="p-5 pt-0 space-y-2.5 flex-1">
+                {offers.map((offer, idx) => (
+                  <div
+                    key={idx}
+                    className="p-3 rounded-xl bg-slate-50/80 dark:bg-slate-950/60 border border-slate-200/60 dark:border-slate-800 flex items-start gap-3"
+                  >
+                    <span className="text-base shrink-0 mt-0.5">{offer.icon}</span>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-1">
+                        <h4 className="font-semibold text-slate-900 dark:text-white text-xs sm:text-sm truncate">
+                          {offer.title}
+                        </h4>
+                        <span className="text-[10px] font-mono font-semibold text-slate-700 dark:text-slate-300 bg-slate-200 dark:bg-slate-800 px-1.5 py-0.5 rounded">
+                          {offer.code}
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                        {offer.description}
+                      </p>
                     </div>
                   </div>
                 ))}
               </CardContent>
+
+              {/* Order CTA Footer */}
+              <div className="px-5 pb-5 mt-auto">
+                <div className="pt-4 border-t border-slate-100 dark:border-slate-800">
+                  <p className="text-[11px] text-slate-400 dark:text-slate-500 mb-3 font-medium uppercase tracking-wider">Order Online &amp; Redeem</p>
+                  <div className="flex gap-2">
+                    <a
+                      href="https://www.zomato.com"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex-1 flex items-center justify-center gap-1.5 bg-red-500 hover:bg-red-600 text-white text-xs font-semibold py-2.5 rounded-xl transition-all"
+                    >
+                      <span>🍕</span>
+                      <span>Zomato</span>
+                    </a>
+                    <a
+                      href="https://www.swiggy.com"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex-1 flex items-center justify-center gap-1.5 bg-orange-500 hover:bg-orange-600 text-white text-xs font-semibold py-2.5 rounded-xl transition-all"
+                    >
+                      <span>🛵</span>
+                      <span>Swiggy</span>
+                    </a>
+                  </div>
+                </div>
+              </div>
             </Card>
 
-            {/* Social Media & Community */}
-            <Card className="bg-gradient-to-br from-orange-50 to-red-50 dark:from-gray-800 dark:to-gray-700 border-orange-200 dark:border-gray-600">
-              <CardHeader className="pb-4">
-                <CardTitle className="flex items-center space-x-2 text-lg sm:text-xl">
-                  <span>📱</span>
-                  <span className="text-gray-900 dark:text-white">Follow Us</span>
-                </CardTitle>
-                <CardDescription className="text-gray-600 dark:text-gray-300 text-sm sm:text-base">
-                  Stay updated with our latest offers and events
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="p-4 sm:p-6">
-                <div className="flex flex-wrap gap-3 sm:gap-4 mb-4">
-                  <Button 
-                    variant="outline" 
-                    className="flex items-center space-x-2 border-orange-500 text-orange-600 hover:bg-orange-50 dark:text-orange-400 dark:hover:bg-orange-900/20 text-sm"
+            {/* Quick Contact & Directions */}
+            <Card className="rounded-2xl shadow-xs bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <MapPin className="w-4 h-4 text-slate-700 dark:text-slate-300" />
+                  <h3 className="font-bold text-slate-900 dark:text-white text-xs sm:text-sm">
+                    Visit Our Outlet
+                  </h3>
+                </div>
+                <a
+                  href="https://maps.google.com/?q=Nallasopara+East+Mumbai"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-xs font-medium text-slate-600 dark:text-slate-400 hover:underline flex items-center gap-1"
+                >
+                  <Navigation className="w-3 h-3" />
+                  <span>Map↗</span>
+                </a>
+              </div>
+
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                Shop 11, Sunshine Garden, Near Railway Station, Nallasopara East, Mumbai 401209
+              </p>
+
+              <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-3">
+                <a
+                  href="tel:+918655676716"
+                  className="flex-1 flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 font-semibold py-2.5 rounded-xl text-xs transition-all"
+                >
+                  <Phone className="w-3.5 h-3.5" />
+                  <span>Call Store</span>
+                </a>
+
+                <div className="flex items-center gap-2 shrink-0">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="p-2.5 rounded-xl border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
                     onClick={() => window.open('https://instagram.com/ctcpizzeria', '_blank')}
                   >
-                    <Instagram className="h-4 w-4" />
-                    <span>@ctcpizzeria</span>
+                    <Instagram className="w-4 h-4 text-pink-500" />
                   </Button>
-                  <Button 
-                    variant="outline" 
-                    className="flex items-center space-x-2 border-orange-500 text-orange-600 hover:bg-orange-50 dark:text-orange-400 dark:hover:bg-orange-900/20 text-sm"
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="p-2.5 rounded-xl border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
                     onClick={() => window.open('https://facebook.com', '_blank')}
                   >
-                    <Facebook className="h-4 w-4" />
-                    <span>Facebook</span>
+                    <Facebook className="w-4 h-4 text-blue-500" />
                   </Button>
                 </div>
-                <div className="space-y-2 text-xs sm:text-sm text-gray-600 dark:text-gray-300">
-                  <p><strong>Coming Soon:</strong> Live music nights, pizza-eating contests</p>
-                  <p><strong>Health & Safety:</strong> ISI-approved kitchens, daily sanitization</p>
-                </div>
-              </CardContent>
+              </div>
             </Card>
+
           </motion.div>
         </div>
 
-        {/* Contact & Location Info */}
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.8, duration: 0.8 }}
-          className="grid grid-cols-1 md:grid-cols-2 gap-6"
-        >
-          <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
-            <CardContent className="p-4 sm:p-6 text-center">
-              <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4">
-                Questions about our hours?
-              </h3>
-              <p className="text-2xl sm:text-3xl font-bold text-orange-600 dark:text-orange-400 mb-2">
-                📞 +91 86556 76716
-              </p>
-              <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
-                Call us anytime during business hours
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
-            <CardContent className="p-4 sm:p-6 text-center">
-              <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4">
-                Find Us
-              </h3>
-              <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 mb-3">
-                Shop 11, Sunshine Garden<br />
-                Near Railway Station, Nalasopara<br />
-                Mumbai, Maharashtra 401209
-              </p>
-              <Button 
-                variant="outline" 
-                className="border-orange-500 text-orange-600 hover:bg-orange-50 dark:text-orange-400 dark:hover:bg-orange-900/20 text-sm"
-                onClick={() => window.open('https://maps.google.com', '_blank')}
-              >
-                📍 Find us on Google Maps
-              </Button>
-            </CardContent>
-          </Card>
-        </motion.div>
       </div>
     </motion.div>
   );

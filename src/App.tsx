@@ -32,7 +32,7 @@ const App = () => (
             <Toaster />
             <Sonner />
             <BrowserRouter>
-              <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
+              <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300">
                 <Navbar />
                 <AnimatePresence mode="wait">
                   <Routes>

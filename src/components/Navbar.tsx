@@ -54,9 +54,9 @@ const Navbar = () => {
           <Link to="/" className="flex items-center space-x-2">
             <motion.div
               whileHover={{ scale: 1.05 }}
-              className="text-2xl font-bold text-orange-600 dark:text-orange-400"
+              className="text-2xl font-bold text-orange-600 dark:text-orange-400 flex items-center gap-2"
             >
-              🍔 Juicy Burger
+              🍕 CTC Pizzeria
             </motion.div>
           </Link>
 
