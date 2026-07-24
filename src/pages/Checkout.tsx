@@ -1,11 +1,13 @@
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { ArrowLeft, CreditCard, MapPin, Phone, User, Mail, CheckCircle } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  ArrowLeft, CreditCard, MapPin, Phone, User, Mail,
+  CheckCircle, Banknote, Package, Clock, ShieldCheck, ChevronRight
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useCart } from '@/contexts/CartContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -15,9 +17,12 @@ interface OrderFormData {
   phone: string;
   address: string;
   city: string;
-  zipCode: string;
+  pinCode: string;
   paymentMethod: 'card' | 'cash';
 }
+
+const DELIVERY_FEE = 49;
+const GST_RATE = 0.05;
 
 const Checkout = () => {
   const { items, getTotalPrice, getTotalItems, clearCart } = useCart();
@@ -31,349 +36,354 @@ const Checkout = () => {
     phone: '',
     address: '',
     city: '',
-    zipCode: '',
-    paymentMethod: 'card'
+    pinCode: '',
+    paymentMethod: 'cash'
   });
-  const [errors, setErrors] = useState<Partial<OrderFormData>>({});
+  const [errors, setErrors] = useState<Partial<Record<keyof OrderFormData, string>>>({});
+
+  const subtotal = getTotalPrice();
+  const gst = subtotal * GST_RATE;
+  const grandTotal = subtotal + DELIVERY_FEE + gst;
 
   const validateForm = (): boolean => {
-    const newErrors: Partial<OrderFormData> = {};
-    
+    const newErrors: Partial<Record<keyof OrderFormData, string>> = {};
     if (!formData.fullName.trim()) newErrors.fullName = 'Full name is required';
     if (!formData.email.trim()) newErrors.email = 'Email is required';
-    else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Email is invalid';
+    else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Enter a valid email';
     if (!formData.phone.trim()) newErrors.phone = 'Phone number is required';
-    if (!formData.address.trim()) newErrors.address = 'Address is required';
+    else if (!/^[6-9]\d{9}$/.test(formData.phone.replace(/\s/g, ''))) newErrors.phone = 'Enter a valid 10-digit Indian mobile number';
+    if (!formData.address.trim()) newErrors.address = 'Delivery address is required';
     if (!formData.city.trim()) newErrors.city = 'City is required';
-    if (!formData.zipCode.trim()) newErrors.zipCode = 'ZIP code is required';
-
+    if (!formData.pinCode.trim()) newErrors.pinCode = 'PIN code is required';
+    else if (!/^\d{6}$/.test(formData.pinCode)) newErrors.pinCode = 'Enter a valid 6-digit PIN code';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleInputChange = (field: keyof OrderFormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: undefined }));
-    }
+    if (errors[field]) setErrors(prev => ({ ...prev, [field]: undefined }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (!validateForm()) return;
-    
     setIsProcessing(true);
-    
-    // Simulate order processing
     setTimeout(() => {
-      const newOrderNumber = `BRG${Date.now().toString().slice(-6)}`;
-      setOrderNumber(newOrderNumber);
+      const num = `CTC${Date.now().toString().slice(-6)}`;
+      setOrderNumber(num);
       setOrderComplete(true);
       setIsProcessing(false);
       clearCart();
     }, 2000);
   };
 
+  // ─── Empty cart ───────────────────────────────────────────────
   if (items.length === 0 && !orderComplete) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-bun-50 to-burger-50 dark:from-gray-900 dark:to-gray-800 pt-20">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <Card className="text-center">
-            <CardContent className="py-12">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-                Your cart is empty
-              </h2>
-              <p className="text-gray-600 dark:text-gray-300 mb-6">
-                Add some delicious burgers to your cart before checkout.
-              </p>
-              <Button 
-                onClick={() => navigate('/menu')}
-                className="bg-burger-600 hover:bg-burger-700 dark:bg-bun-600 dark:hover:bg-bun-700"
-              >
-                Browse Menu
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
+      <div className="min-h-screen bg-gray-950 flex items-center justify-center px-4">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center"
+        >
+          <div className="text-7xl mb-6">🛒</div>
+          <h2 className="text-2xl font-bold text-white mb-3">Your cart is empty</h2>
+          <p className="text-gray-400 mb-8">Add some delicious items to proceed to checkout.</p>
+          <Button
+            onClick={() => navigate('/menu')}
+            className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-xl text-base"
+          >
+            Browse Menu
+          </Button>
+        </motion.div>
       </div>
     );
   }
 
+  // ─── Order success ────────────────────────────────────────────
   if (orderComplete) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-bun-50 to-burger-50 dark:from-gray-900 dark:to-gray-800 pt-20">
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="min-h-screen bg-gray-950 flex items-center justify-center px-4">
+        <motion.div
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ type: 'spring', duration: 0.6 }}
+          className="bg-gray-900 border border-gray-700 rounded-2xl p-10 max-w-md w-full text-center shadow-2xl"
+        >
           <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="text-center"
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.3, type: 'spring', stiffness: 200 }}
+            className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6"
           >
-            <Card>
-              <CardContent className="py-12">
-                <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-6" />
-                <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-                  Order Confirmed!
-                </h2>
-                <p className="text-xl text-gray-600 dark:text-gray-300 mb-2">
-                  Order #{orderNumber}
-                </p>
-                <p className="text-gray-600 dark:text-gray-300 mb-8">
-                  Estimated delivery time: 25-35 minutes
-                </p>
-                <div className="space-y-4">
-                  <Button 
-                    onClick={() => navigate('/')}
-                    className="w-full bg-burger-600 hover:bg-burger-700 dark:bg-bun-600 dark:hover:bg-bun-700"
-                  >
-                    Return to Home
-                  </Button>
-                  <Button 
-                    onClick={() => navigate('/menu')}
-                    variant="outline"
-                    className="w-full"
-                  >
-                    Order Again
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+            <CheckCircle className="h-10 w-10 text-green-400" />
           </motion.div>
-        </div>
+          <h2 className="text-3xl font-bold text-white mb-2">Order Placed! 🎉</h2>
+          <p className="text-gray-400 mb-1">Order ID: <span className="text-orange-400 font-semibold">#{orderNumber}</span></p>
+          <p className="text-gray-400 mb-8">Estimated delivery: <span className="text-white font-medium">25–40 minutes</span></p>
+
+          <div className="grid grid-cols-3 gap-3 mb-8">
+            {[
+              { icon: Package, label: 'Preparing', color: 'text-orange-400' },
+              { icon: Clock, label: '25–40 min', color: 'text-yellow-400' },
+              { icon: ShieldCheck, label: 'Confirmed', color: 'text-green-400' },
+            ].map(({ icon: Icon, label, color }) => (
+              <div key={label} className="bg-gray-800 rounded-xl p-3 flex flex-col items-center gap-1">
+                <Icon className={`h-5 w-5 ${color}`} />
+                <span className="text-xs text-gray-300">{label}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="space-y-3">
+            <Button onClick={() => navigate('/')} className="w-full bg-orange-500 hover:bg-orange-600 text-white rounded-xl py-2.5">
+              Back to Home
+            </Button>
+            <Button onClick={() => navigate('/menu')} variant="outline" className="w-full border-gray-600 text-gray-300 hover:bg-gray-800 rounded-xl py-2.5">
+              Order Again
+            </Button>
+          </div>
+        </motion.div>
       </div>
     );
   }
 
+  // ─── Main checkout ────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-gradient-to-br from-bun-50 to-burger-50 dark:from-gray-900 dark:to-gray-800 pt-20">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex items-center mb-8">
-          <Button
-            variant="ghost"
+    <div className="min-h-screen bg-gray-950 pt-20 pb-12">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        {/* Header */}
+        <div className="flex items-center gap-4 mb-8">
+          <button
             onClick={() => navigate(-1)}
-            className="mr-4 text-gray-700 dark:text-gray-200"
+            className="flex items-center gap-1.5 text-gray-400 hover:text-white transition-colors text-sm"
           >
-            <ArrowLeft className="h-4 w-4 mr-2" />
+            <ArrowLeft className="h-4 w-4" />
             Back
-          </Button>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Checkout</h1>
+          </button>
+          <div className="flex items-center gap-2 text-gray-500 text-sm">
+            <span className="text-orange-400 font-medium">Cart</span>
+            <ChevronRight className="h-3.5 w-3.5" />
+            <span className="text-white font-semibold">Checkout</span>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Order Form */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-gray-900 dark:text-white">Delivery Information</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="fullName" className="text-gray-700 dark:text-gray-200">
-                      <User className="h-4 w-4 inline mr-2" />
-                      Full Name *
-                    </Label>
-                    <Input
-                      id="fullName"
-                      value={formData.fullName}
-                      onChange={(e) => handleInputChange('fullName', e.target.value)}
-                      className={`bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 ${
-                        errors.fullName ? 'border-red-500' : ''
-                      }`}
-                      placeholder="Enter your full name"
-                    />
-                    {errors.fullName && (
-                      <p className="text-red-500 text-sm mt-1">{errors.fullName}</p>
-                    )}
-                  </div>
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
 
-                  <div>
-                    <Label htmlFor="phone" className="text-gray-700 dark:text-gray-200">
-                      <Phone className="h-4 w-4 inline mr-2" />
-                      Phone Number *
-                    </Label>
-                    <Input
-                      id="phone"
-                      value={formData.phone}
-                      onChange={(e) => handleInputChange('phone', e.target.value)}
-                      className={`bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 ${
-                        errors.phone ? 'border-red-500' : ''
-                      }`}
-                      placeholder="Enter your phone number"
-                    />
-                    {errors.phone && (
-                      <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
-                    )}
-                  </div>
-                </div>
+          {/* ── LEFT: Delivery Form ── */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="lg:col-span-3 bg-gray-900 border border-gray-700/60 rounded-2xl p-6 sm:p-8"
+          >
+            <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+              <MapPin className="h-5 w-5 text-orange-400" />
+              Delivery Information
+            </h2>
 
+            <form onSubmit={handleSubmit} className="space-y-5">
+              {/* Name + Phone */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="email" className="text-gray-700 dark:text-gray-200">
-                    <Mail className="h-4 w-4 inline mr-2" />
-                    Email Address *
+                  <Label htmlFor="fullName" className="text-gray-300 text-sm mb-1.5 flex items-center gap-1.5">
+                    <User className="h-3.5 w-3.5" /> Full Name *
                   </Label>
                   <Input
-                    id="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => handleInputChange('email', e.target.value)}
-                    className={`bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 ${
-                      errors.email ? 'border-red-500' : ''
-                    }`}
-                    placeholder="Enter your email address"
+                    id="fullName"
+                    value={formData.fullName}
+                    onChange={e => handleInputChange('fullName', e.target.value)}
+                    placeholder="Rahul Sharma"
+                    className={`bg-gray-800 border-gray-600 text-white placeholder:text-gray-500 rounded-xl focus:border-orange-400 focus:ring-orange-400/20 ${errors.fullName ? 'border-red-500' : ''}`}
                   />
-                  {errors.email && (
-                    <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-                  )}
+                  {errors.fullName && <p className="text-red-400 text-xs mt-1">{errors.fullName}</p>}
                 </div>
-
                 <div>
-                  <Label htmlFor="address" className="text-gray-700 dark:text-gray-200">
-                    <MapPin className="h-4 w-4 inline mr-2" />
-                    Delivery Address *
+                  <Label htmlFor="phone" className="text-gray-300 text-sm mb-1.5 flex items-center gap-1.5">
+                    <Phone className="h-3.5 w-3.5" /> Phone Number *
                   </Label>
                   <Input
-                    id="address"
-                    value={formData.address}
-                    onChange={(e) => handleInputChange('address', e.target.value)}
-                    className={`bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 ${
-                      errors.address ? 'border-red-500' : ''
-                    }`}
-                    placeholder="Enter your street address"
+                    id="phone"
+                    value={formData.phone}
+                    onChange={e => handleInputChange('phone', e.target.value)}
+                    placeholder="9876543210"
+                    className={`bg-gray-800 border-gray-600 text-white placeholder:text-gray-500 rounded-xl focus:border-orange-400 focus:ring-orange-400/20 ${errors.phone ? 'border-red-500' : ''}`}
                   />
-                  {errors.address && (
-                    <p className="text-red-500 text-sm mt-1">{errors.address}</p>
-                  )}
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="city" className="text-gray-700 dark:text-gray-200">
-                      City *
-                    </Label>
-                    <Input
-                      id="city"
-                      value={formData.city}
-                      onChange={(e) => handleInputChange('city', e.target.value)}
-                      className={`bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 ${
-                        errors.city ? 'border-red-500' : ''
-                      }`}
-                      placeholder="Enter your city"
-                    />
-                    {errors.city && (
-                      <p className="text-red-500 text-sm mt-1">{errors.city}</p>
-                    )}
-                  </div>
-
-                  <div>
-                    <Label htmlFor="zipCode" className="text-gray-700 dark:text-gray-200">
-                      ZIP Code *
-                    </Label>
-                    <Input
-                      id="zipCode"
-                      value={formData.zipCode}
-                      onChange={(e) => handleInputChange('zipCode', e.target.value)}
-                      className={`bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 ${
-                        errors.zipCode ? 'border-red-500' : ''
-                      }`}
-                      placeholder="Enter ZIP code"
-                    />
-                    {errors.zipCode && (
-                      <p className="text-red-500 text-sm mt-1">{errors.zipCode}</p>
-                    )}
-                  </div>
-                </div>
-
-                <div>
-                  <Label className="text-gray-700 dark:text-gray-200 mb-3 block">
-                    <CreditCard className="h-4 w-4 inline mr-2" />
-                    Payment Method
-                  </Label>
-                  <div className="grid grid-cols-2 gap-4">
-                    <Button
-                      type="button"
-                      variant={formData.paymentMethod === 'card' ? 'default' : 'outline'}
-                      onClick={() => handleInputChange('paymentMethod', 'card')}
-                      className="justify-start"
-                    >
-                      <CreditCard className="h-4 w-4 mr-2" />
-                      Card Payment
-                    </Button>
-                    <Button
-                      type="button"
-                      variant={formData.paymentMethod === 'cash' ? 'default' : 'outline'}
-                      onClick={() => handleInputChange('paymentMethod', 'cash')}
-                      className="justify-start"
-                    >
-                      💵 Cash on Delivery
-                    </Button>
-                  </div>
-                </div>
-
-                <Button
-                  type="submit"
-                  disabled={isProcessing}
-                  className="w-full bg-burger-600 hover:bg-burger-700 dark:bg-bun-600 dark:hover:bg-bun-700 text-white py-3 text-lg"
-                >
-                  {isProcessing ? 'Processing Order...' : `Place Order - $${getTotalPrice().toFixed(2)}`}
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
-
-          {/* Order Summary */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-gray-900 dark:text-white">Order Summary</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {items.map((item) => (
-                  <div key={item.id} className="flex items-center space-x-4 p-3 border border-gray-200 dark:border-gray-700 rounded-lg">
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="w-12 h-12 object-cover rounded-md"
-                    />
-                    <div className="flex-1">
-                      <h4 className="font-medium text-gray-900 dark:text-white text-sm">{item.name}</h4>
-                      <p className="text-burger-600 dark:text-bun-400 font-semibold text-sm">
-                        ${item.price.toFixed(2)} x {item.quantity}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-semibold text-gray-900 dark:text-white">
-                        ${(item.price * item.quantity).toFixed(2)}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-                
-                <div className="border-t border-gray-200 dark:border-gray-700 pt-4 space-y-2">
-                  <div className="flex justify-between text-gray-600 dark:text-gray-300">
-                    <span>Subtotal ({getTotalItems()} items)</span>
-                    <span>${getTotalPrice().toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between text-gray-600 dark:text-gray-300">
-                    <span>Delivery Fee</span>
-                    <span>$2.99</span>
-                  </div>
-                  <div className="flex justify-between text-gray-600 dark:text-gray-300">
-                    <span>Tax</span>
-                    <span>${(getTotalPrice() * 0.08).toFixed(2)}</span>
-                  </div>
-                  <div className="border-t border-gray-200 dark:border-gray-700 pt-2">
-                    <div className="flex justify-between items-center text-lg font-bold">
-                      <span className="text-gray-900 dark:text-white">Total</span>
-                      <span className="text-burger-600 dark:text-bun-400">
-                        ${(getTotalPrice() + 2.99 + (getTotalPrice() * 0.08)).toFixed(2)}
-                      </span>
-                    </div>
-                  </div>
+                  {errors.phone && <p className="text-red-400 text-xs mt-1">{errors.phone}</p>}
                 </div>
               </div>
-            </CardContent>
-          </Card>
+
+              {/* Email */}
+              <div>
+                <Label htmlFor="email" className="text-gray-300 text-sm mb-1.5 flex items-center gap-1.5">
+                  <Mail className="h-3.5 w-3.5" /> Email Address *
+                </Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={e => handleInputChange('email', e.target.value)}
+                  placeholder="rahul@example.com"
+                  className={`bg-gray-800 border-gray-600 text-white placeholder:text-gray-500 rounded-xl focus:border-orange-400 focus:ring-orange-400/20 ${errors.email ? 'border-red-500' : ''}`}
+                />
+                {errors.email && <p className="text-red-400 text-xs mt-1">{errors.email}</p>}
+              </div>
+
+              {/* Address */}
+              <div>
+                <Label htmlFor="address" className="text-gray-300 text-sm mb-1.5 flex items-center gap-1.5">
+                  <MapPin className="h-3.5 w-3.5" /> Delivery Address *
+                </Label>
+                <Input
+                  id="address"
+                  value={formData.address}
+                  onChange={e => handleInputChange('address', e.target.value)}
+                  placeholder="House/Flat No., Street, Area"
+                  className={`bg-gray-800 border-gray-600 text-white placeholder:text-gray-500 rounded-xl focus:border-orange-400 focus:ring-orange-400/20 ${errors.address ? 'border-red-500' : ''}`}
+                />
+                {errors.address && <p className="text-red-400 text-xs mt-1">{errors.address}</p>}
+              </div>
+
+              {/* City + PIN */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="city" className="text-gray-300 text-sm mb-1.5">City *</Label>
+                  <Input
+                    id="city"
+                    value={formData.city}
+                    onChange={e => handleInputChange('city', e.target.value)}
+                    placeholder="Mumbai"
+                    className={`bg-gray-800 border-gray-600 text-white placeholder:text-gray-500 rounded-xl focus:border-orange-400 focus:ring-orange-400/20 ${errors.city ? 'border-red-500' : ''}`}
+                  />
+                  {errors.city && <p className="text-red-400 text-xs mt-1">{errors.city}</p>}
+                </div>
+                <div>
+                  <Label htmlFor="pinCode" className="text-gray-300 text-sm mb-1.5">PIN Code *</Label>
+                  <Input
+                    id="pinCode"
+                    value={formData.pinCode}
+                    onChange={e => handleInputChange('pinCode', e.target.value)}
+                    placeholder="400001"
+                    maxLength={6}
+                    className={`bg-gray-800 border-gray-600 text-white placeholder:text-gray-500 rounded-xl focus:border-orange-400 focus:ring-orange-400/20 ${errors.pinCode ? 'border-red-500' : ''}`}
+                  />
+                  {errors.pinCode && <p className="text-red-400 text-xs mt-1">{errors.pinCode}</p>}
+                </div>
+              </div>
+
+              {/* Payment Method */}
+              <div>
+                <Label className="text-gray-300 text-sm mb-3 block flex items-center gap-1.5">
+                  <CreditCard className="h-3.5 w-3.5" /> Payment Method
+                </Label>
+                <div className="grid grid-cols-2 gap-3">
+                  {[
+                    { value: 'card', icon: CreditCard, label: 'Card Payment', sub: 'Debit / Credit / UPI' },
+                    { value: 'cash', icon: Banknote, label: 'Cash on Delivery', sub: 'Pay at your door' },
+                  ].map(({ value, icon: Icon, label, sub }) => (
+                    <button
+                      key={value}
+                      type="button"
+                      onClick={() => handleInputChange('paymentMethod', value)}
+                      className={`flex items-center gap-3 p-4 rounded-xl border-2 transition-all text-left ${
+                        formData.paymentMethod === value
+                          ? 'border-orange-500 bg-orange-500/10'
+                          : 'border-gray-600 bg-gray-800 hover:border-gray-500'
+                      }`}
+                    >
+                      <Icon className={`h-5 w-5 flex-shrink-0 ${formData.paymentMethod === value ? 'text-orange-400' : 'text-gray-400'}`} />
+                      <div>
+                        <p className={`text-sm font-medium ${formData.paymentMethod === value ? 'text-orange-300' : 'text-gray-200'}`}>{label}</p>
+                        <p className="text-xs text-gray-500">{sub}</p>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Submit */}
+              <Button
+                type="submit"
+                disabled={isProcessing}
+                className="w-full bg-orange-500 hover:bg-orange-600 disabled:opacity-60 text-white font-semibold py-3.5 rounded-xl text-base mt-2 transition-all shadow-lg shadow-orange-500/20"
+              >
+                {isProcessing ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+                    </svg>
+                    Processing Order...
+                  </span>
+                ) : (
+                  `Place Order · ₹${grandTotal.toFixed(0)}`
+                )}
+              </Button>
+            </form>
+          </motion.div>
+
+          {/* ── RIGHT: Order Summary ── */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="lg:col-span-2 bg-gray-900 border border-gray-700/60 rounded-2xl overflow-hidden sticky top-24"
+          >
+            <div className="px-5 pt-5 pb-3 border-b border-gray-700/60">
+              <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                <Package className="h-5 w-5 text-orange-400" />
+                Order Summary
+                <span className="ml-auto text-sm font-normal text-gray-400">{getTotalItems()} items</span>
+              </h2>
+            </div>
+
+            {/* Scrollable Items */}
+            <div className="cart-scroll overflow-y-auto max-h-72 px-4 py-3 space-y-2.5" style={{ scrollbarWidth: 'thin', scrollbarColor: '#4b5563 transparent' }}>
+              {items.map(item => (
+                <div key={item.id} className="flex items-center gap-3 bg-gray-800/60 rounded-xl p-2.5">
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    className="w-11 h-11 object-cover rounded-lg flex-shrink-0"
+                    onError={e => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=100&h=100&fit=crop'; }}
+                  />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-white truncate">{item.name}</p>
+                    <p className="text-xs text-gray-400">₹{item.price.toFixed(0)} × {item.quantity}</p>
+                  </div>
+                  <p className="text-sm font-semibold text-orange-400 flex-shrink-0">
+                    ₹{(item.price * item.quantity).toFixed(0)}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            {/* Totals */}
+            <div className="px-5 pt-3 pb-5 border-t border-gray-700/60 space-y-2.5">
+              <div className="flex justify-between text-sm text-gray-400">
+                <span>Subtotal</span>
+                <span>₹{subtotal.toFixed(0)}</span>
+              </div>
+              <div className="flex justify-between text-sm text-gray-400">
+                <span>Delivery Fee</span>
+                <span>₹{DELIVERY_FEE}</span>
+              </div>
+              <div className="flex justify-between text-sm text-gray-400">
+                <span>GST (5%)</span>
+                <span>₹{gst.toFixed(0)}</span>
+              </div>
+              <div className="h-px bg-gray-700 my-1" />
+              <div className="flex justify-between items-center">
+                <span className="text-base font-bold text-white">Total</span>
+                <span className="text-xl font-bold text-orange-400">₹{grandTotal.toFixed(0)}</span>
+              </div>
+              <p className="text-xs text-gray-500 text-center pt-1 flex items-center justify-center gap-1">
+                <ShieldCheck className="h-3.5 w-3.5" />
+                Secure & encrypted checkout
+              </p>
+            </div>
+          </motion.div>
+
         </div>
       </div>
     </div>

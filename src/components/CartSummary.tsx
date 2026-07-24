@@ -3,19 +3,22 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useCart } from '@/contexts/CartContext';
-import { Minus, Plus, Trash2, X, ShoppingCart } from 'lucide-react';
+import { Minus, Plus, Trash2, X, ShoppingCart, ArrowRight } from 'lucide-react';
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 interface CartSummaryProps {
   showActions?: boolean;
+  onClose?: () => void;
 }
 
-const CartSummary = ({ showActions = true }: CartSummaryProps) => {
+const CartSummary = ({ showActions = true, onClose }: CartSummaryProps) => {
   const { items, updateQuantity, removeFromCart, getTotalPrice, getTotalItems, clearCart } = useCart();
   const [showClearConfirmation, setShowClearConfirmation] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleClearCart = async () => {
     setIsLoading(true);
@@ -77,7 +80,7 @@ const CartSummary = ({ showActions = true }: CartSummaryProps) => {
   }
 
   return (
-    <div className="h-full flex flex-col bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 relative">
+    <div className="h-full flex flex-col bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 relative overflow-hidden">
       {/* Clear Confirmation Modal */}
       <AnimatePresence>
         {showClearConfirmation && (
@@ -139,13 +142,13 @@ const CartSummary = ({ showActions = true }: CartSummaryProps) => {
             aria-label="Clear all items from cart"
           >
             <Trash2 className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
-            <span className="hidden sm:inline">Clear</span>
+            <span>Clear</span>
           </Button>
         </div>
       </div>
       
       {/* Scrollable Items Area - Flexible */}
-      <div className="flex-1 overflow-y-auto px-3 sm:px-6 py-3 sm:py-4">
+      <div className="cart-scroll flex-1 overflow-y-auto px-3 sm:px-6 py-3 sm:py-4" style={{scrollbarWidth:'thin', scrollbarColor:'#4b5563 transparent'}}>
         <div className="space-y-2 sm:space-y-3">
           <AnimatePresence>
             {items.map((item) => (
@@ -236,7 +239,7 @@ const CartSummary = ({ showActions = true }: CartSummaryProps) => {
         
       {/* Footer - Fixed */}
       <motion.div 
-        className="flex-shrink-0 border-t border-gray-200 dark:border-gray-700 pt-3 sm:pt-4 px-3 sm:px-6 pb-3 sm:pb-6 bg-white dark:bg-gray-800"
+        className="flex-shrink-0 border-t border-gray-200 dark:border-gray-700 pt-3 sm:pt-4 px-3 sm:px-6 pb-3 sm:pb-4 bg-white dark:bg-gray-800 space-y-3"
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
       >
@@ -246,9 +249,21 @@ const CartSummary = ({ showActions = true }: CartSummaryProps) => {
             ₹{getTotalPrice().toFixed(0)}
           </span>
         </div>
-        <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+        <div className="text-xs text-gray-500 dark:text-gray-400">
           Taxes and delivery charges will be calculated at checkout
         </div>
+        {showActions && (
+          <Button
+            onClick={() => {
+              onClose?.();
+              navigate('/checkout');
+            }}
+            className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2.5 rounded-lg flex items-center justify-center gap-2 transition-all duration-200 shadow-md hover:shadow-orange-500/30"
+          >
+            Proceed to Checkout
+            <ArrowRight className="h-4 w-4" />
+          </Button>
+        )}
       </motion.div>
     </div>
   );

@@ -94,11 +94,13 @@ const Navbar = () => {
                     )}
                   </Button>
                 </SheetTrigger>
-                <SheetContent side="right" className="w-full sm:max-w-lg">
-                  <SheetHeader>
+                <SheetContent side="right" className="w-full sm:max-w-lg flex flex-col p-0 overflow-hidden [&>button]:hidden">
+                  <SheetHeader className="sr-only">
                     <SheetTitle>Your Cart</SheetTitle>
                   </SheetHeader>
-                  <CartSummary />
+                  <div className="flex-1 overflow-hidden flex flex-col">
+                    <CartSummary onClose={() => setIsCartOpen(false)} />
+                  </div>
                 </SheetContent>
               </Sheet>
             )}
