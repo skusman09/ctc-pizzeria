@@ -47,7 +47,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 .from('profiles')
                 .select('role')
                 .eq('id', session.user.id)
-                .single();
+                .maybeSingle();
               
               setUserRole(profile?.role || 'customer');
             } catch (error) {

@@ -28,13 +28,14 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const { user, userRole, signOut } = useAuth();
-  const { items } = useCart();
+  const { items, clearCart } = useCart();
   const navigate = useNavigate();
 
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
 
   const handleSignOut = async () => {
     await signOut();
+    // Do not clear server-side cart on logout; guest cart will be loaded automatically
     navigate('/');
   };
 
